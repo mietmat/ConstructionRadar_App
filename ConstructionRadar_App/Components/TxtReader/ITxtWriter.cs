@@ -2,8 +2,8 @@
 
 namespace ConstructionRadar_App.Components.TxtReader
 {
-    public interface ITxtReader
+    public interface ITxtWriter
     {
-        List<Employee> ReadEmployeesFromFile(string filePath);
+        List<Employee> WriteEmployeeToFile(string filePath);
     }
 }

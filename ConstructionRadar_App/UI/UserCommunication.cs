@@ -1,5 +1,7 @@
-﻿using ConstructionRadar_App.Components.TxtReader;
-using ConstructionRadar_App.Entities;
+﻿using ConstructionRadar_App.Components.DataProviders.Extensions;
+using ConstructionRadar_App.Components.TxtReader;
+using ConstructionRadar_App.Repositories;
+using Employee = ConstructionRadar_App.Entities.Employee;
 
 namespace ConstructionRadar_App.UI
 {
@@ -10,57 +12,87 @@ namespace ConstructionRadar_App.UI
 
         string filePath = "Employees.txt";
         string actionsFile = $"AllAction.txt";
-        string name = "";
-        string surname = "";
 
         public UserCommunication(ITxtReader txtReader)
         {
             _txtReader = txtReader;
         }
 
-        public void AddEmployeeToFile()
+        public void AddEmployeeToFile(Employee employee)
         {
             if (!File.Exists(filePath))
                 using (var allEmployee = File.Create(filePath))
                 {
                 }
             Console.Clear();
-            var lines = _txtReader.ProcessEmployee(filePath);
-            Console.Clear();
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"We have {lines.Count() + 1} employees !");
-            Console.ForegroundColor = ConsoleColor.White;
 
             using (var allEmployee = File.AppendText(filePath))
             {
-                allEmployee.WriteLine($"{lines.Count() + 1} {name} {surname}");
-
-                Console.WriteLine($"Added new employee: {name}!");
+                allEmployee.WriteLine($"{employee.Id} {employee.FirstName} {employee.Surname}");
             }
 
             using (var allActions = File.AppendText(actionsFile))
             {
-                allActions.WriteLine($"{DateTime.UtcNow}-EmployeeAdded- {lines.Count() + 1}. {name} {surname}");
+                allActions.WriteLine($"{DateTime.UtcNow}-EmployeeAdded- {employee.Id}. {employee.FirstName} {employee.Surname}");
             }
 
-            _txtReader.ProcessEmployee(filePath);
-
-            Console.WriteLine("Press any key to open 'Main Menu' !");
-            Console.ReadKey();
         }
 
-        public void DeleteEmployeeFromFile()
+        public void AddEmployeesToFile(IRepository<Employee> employees)
         {
+            List<Employee> employeeList = employees.GetAll().ToList();
+
+
+            if (!File.Exists(filePath))
+                using (var allEmployee = File.Create(filePath))
+                {
+                }
+            Console.Clear();
+
+            foreach (var employee in employeeList)
+            {
+                using (var allEmployee = File.AppendText(filePath))
+                {
+                    allEmployee.WriteLine($"{employee.Id} {employee.FirstName} {employee.Surname}");
+                }
+
+                using (var allActions = File.AppendText(actionsFile))
+                {
+                    allActions.WriteLine($"{DateTime.UtcNow}-EmployeeAdded- Id: {employee.Id}. FirstName: {employee.FirstName}, Surname: {employee.Surname}");
+                }
+            }
+
+
+
+        }
+
+        public Employee DeleteEmployeeFromFile(List<Employee> employees)
+        {
+            bool valid = true;
+            int numberToRemove;
+            string input;
             Console.Clear();
             if (File.Exists(filePath))
             {
-                IEnumerable<Employee> lines = _txtReader.ProcessEmployee(filePath);
+                Console.WriteLine("Current employee list:");
+                foreach (var emp in employees)
+                {
+                    Console.WriteLine($"{emp.Id}. {emp.FirstName} {emp.Surname}");
+                }
 
-                Console.Write($"If you want to remove employee use number > 0 and max: {lines.Count()}\nPlease write number to delete employee: ");
+                do
+                {
+                    Console.Write($"If you want to remove employee use number > 0 and max:" +
+                    $" {employees.Count()}\nPlease write number to delete employee: ");
+                    input = Console.ReadLine();
 
+                    valid = CheckData.CheckingIntData(input);
 
-                int numberToRemove = int.Parse(Console.ReadLine());
+                } while (!valid);
 
+                numberToRemove = int.Parse(input);
+
+                var employee = employees.FirstOrDefault(x => x.Id == numberToRemove);
                 File.Delete(filePath);
 
                 if (numberToRemove <= 0)
@@ -69,135 +101,61 @@ namespace ConstructionRadar_App.UI
                 }
 
                 Console.Clear();
-                var list = lines.ToList();
 
                 using (var allActions = File.AppendText(actionsFile))
                 {
-                    allActions.Write($"{DateTime.Now}-EmployeeDeleted- {list.ElementAt(numberToRemove - 1)}");
+                    allActions.Write($"{DateTime.Now}-EmployeeDeleted- Id:{employee.Id}, FirstName: {employee.FirstName}, Date: {DateTime.UtcNow}");
                 }
 
-                list.RemoveAt(numberToRemove - 1);
 
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("List after employee remove: ");
-                Console.ForegroundColor = ConsoleColor.White;
-
-                var id = 0;
-                foreach (var itemAfterRemove in list)
-                {
-                    itemAfterRemove.Id = ++id;
-                    if (itemAfterRemove != null)
-                    {
-                        Console.Write(itemAfterRemove);
-                    }
-
-                    using (var afterRemove = File.AppendText(filePath))
-                    {
-                        if (afterRemove != null)
-                        {
-                            afterRemove.Write($"{itemAfterRemove}");
-
-                        }
-                    }
-                }
-
+                return (Employee)employee;
             }
             else
             {
                 Console.WriteLine("You can't delete the employee - file doesn't exist ! Please choose another option from 'Main Menu' !\n\nPress any key to open 'Main Menu' !\n");
                 Console.ReadKey();
             }
+            return employee;
 
-            Console.WriteLine("Press any key to open 'Main Menu' !");
-            Console.ReadKey();
-            Console.Clear();
         }
 
-        public void EnterEmployeeName()
+        public Employee EnterEmployeeName()
         {
             Console.Write("Please enter name of the employee: ");
 
-            employee.FirstName = name;
-            name = Console.ReadLine().ToUpper();
+            employee.FirstName = Console.ReadLine().ToUpper();
 
-            while (!CheckingStringData(name))
+            while (!CheckData.CheckingStringData(employee.FirstName))
             {
                 Console.Write("Employee name should have only a letters ! Please enter name of the employee: ");
-                name = Console.ReadLine().ToUpper();
+                employee.FirstName = Console.ReadLine().ToUpper();
             }
 
-            if (name.ToLower() == "q")
+            if (employee.FirstName.ToLower() == "q")
             {
                 Environment.Exit(0);
             }
+            return employee;
         }
 
-        public void EnterEmployeeSurname()
+        public Employee EnterEmployeeSurname()
         {
             Console.Write("Please enter surname of the employee: ");
 
-            employee.Surname = surname;
-            surname = Console.ReadLine().ToUpper();
-
-            while (!CheckingStringData(surname))
+            employee.Surname = Console.ReadLine().ToUpper();
+            while (!CheckData.CheckingStringData(employee.Surname))
             {
                 Console.Write("Employee surname should have only a letters ! Please enter surname of the employee: ");
-                surname = Console.ReadLine().ToUpper();
+                employee.Surname = Console.ReadLine().ToUpper();
             }
 
-            if (surname.ToLower() == "q")
+            if (employee.Surname.ToLower() == "q")
             {
                 Environment.Exit(0);
             }
+
+            return employee;
         }
 
-
-        public void SelectedNumber(int number)
-        {
-            switch (number)
-            {
-                case 0:
-                    Console.Clear();
-                    Console.WriteLine($"Please select number 1-14\nPress any key to open 'Main Menu'");
-                    Console.ReadKey();
-                    Console.Clear();
-                    break;
-                case 1:
-                    Console.Clear();
-                    _txtReader.ProcessEmployee(filePath);
-                    EnterEmployeeName();
-                    EnterEmployeeSurname();
-                    AddEmployeeToFile();
-                    Console.Clear();
-                    break;
-                case 2:
-                    DeleteEmployeeFromFile();
-                    break;
-                default:
-                    Console.Clear();
-                    Console.WriteLine($"This option not implemented yet ! Will be soon !\n\n" +
-                        $"Press any key to open 'Main Menu'");
-                    Console.ReadKey();
-                    Console.Clear();
-                    break;
-            }
-        }
-
-        public bool CheckingStringData(string data)
-        {
-            bool checking = true;
-            foreach (var number in data)
-            {
-                if (!char.IsDigit(number) && char.IsLetterOrDigit(number))
-                {
-                    return checking;
-                }
-                else
-                    return checking = false;
-            }
-
-            return checking;
-
-        }
     }
 }

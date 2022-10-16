@@ -1,6 +1,6 @@
 ﻿namespace ConstructionRadar_App.Components.DataProviders.Extensions
 {
-    public class CheckData
+    public static class CheckData
     {
         public static bool CheckingStringData(string data)
         {
@@ -16,6 +16,21 @@
             }
 
             return checking;
+
+        }
+
+        public static bool CheckingIntData(string data)
+        {
+            bool checking = true;
+            int value;
+
+            if (int.TryParse(data.ToString(), out value))
+            {
+                return checking;
+            }
+
+            return checking = false;
+
 
         }
     }

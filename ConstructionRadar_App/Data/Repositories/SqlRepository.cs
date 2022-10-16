@@ -44,6 +44,11 @@ namespace ConstructionRadar_App.Repositories
             _dbSet.Remove(item);
         }
 
+        public void RemoveAll()
+        {
+            _dbSet.ToList().Clear();
+        }
+
         public void Save()
         {
             _dbContext.SaveChanges();

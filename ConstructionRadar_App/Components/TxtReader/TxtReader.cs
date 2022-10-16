@@ -4,7 +4,7 @@ namespace ConstructionRadar_App.Components.TxtReader
 {
     public class TxtReader : ITxtReader
     {
-        public List<Employee> ProcessEmployee(string filePath)
+        public List<Employee> ReadEmployeesFromFile(string filePath)
         {
             if (!File.Exists(filePath))
             {
@@ -26,22 +26,6 @@ namespace ConstructionRadar_App.Components.TxtReader
                         Surname = columns[2]
                     };
                 });
-
-                if (employees.ToList().Count() > 0)
-                {
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("Current list with employees: ");
-                    Console.ForegroundColor = ConsoleColor.White;
-
-                    foreach (var employee in employees)
-                    {
-                        Console.WriteLine($"{employee.Id}. {employee.FirstName} {employee.Surname}");
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("Empty list of employee. Please add new employ !");
-                }
 
                 return employees.ToList();
 

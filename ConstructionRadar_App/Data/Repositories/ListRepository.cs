@@ -20,6 +20,11 @@ namespace ConstructionRadar_App.Repositories
             _items.Remove(item);
         }
 
+        public void RemoveAll()
+        {
+            _items.Clear();
+        }
+
         public T GetById(int id)
         {
             return _items.Single(e => e.Id == id);
