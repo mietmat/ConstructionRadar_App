@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32804.467
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConstructionRadar_App", "ConstructionRadar_App\ConstructionRadar_App.csproj", "{2890BEAA-B853-4BD9-B4D5-86F0A4E03EB2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2890BEAA-B853-4BD9-B4D5-86F0A4E03EB2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2890BEAA-B853-4BD9-B4D5-86F0A4E03EB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2890BEAA-B853-4BD9-B4D5-86F0A4E03EB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2890BEAA-B853-4BD9-B4D5-86F0A4E03EB2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FE8E2286-81D4-48D6-AACE-96DBB2311968}
+	EndGlobalSection
+EndGlobal
