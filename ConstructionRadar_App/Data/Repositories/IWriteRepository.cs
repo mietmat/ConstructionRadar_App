@@ -7,5 +7,6 @@ namespace ConstructionRadar_App.Repositories
         void Add(T item);
         void Remove(T item);
         void Save();
+        void RemoveAll();
     }
 }

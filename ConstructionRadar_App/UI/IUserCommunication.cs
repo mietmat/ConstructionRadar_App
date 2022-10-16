@@ -1,12 +1,15 @@
-﻿namespace ConstructionRadar_App.UI
+﻿using ConstructionRadar_App.Entities;
+using ConstructionRadar_App.Repositories;
+
+namespace ConstructionRadar_App.UI
 {
     public interface IUserCommunication
     {
-        void SelectedNumber(int number);
-        void EnterEmployeeName();
-        void EnterEmployeeSurname();
-        void AddEmployeeToFile();
-        void DeleteEmployeeFromFile();
+        Employee EnterEmployeeName();
+        Employee EnterEmployeeSurname();
+        void AddEmployeeToFile(Employee employee);
+        void AddEmployeesToFile(IRepository<Employee> employee);
+        Employee DeleteEmployeeFromFile(List<Employee> employees);
 
     }
 }
