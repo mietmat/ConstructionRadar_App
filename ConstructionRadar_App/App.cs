@@ -77,6 +77,7 @@ namespace ConstructionRadar_App
                                 {
                                     Console.WriteLine("Empty list of employee. Please add new employ !");
                                 }
+
                                 emp = _userCommunication.EnterEmployeeName();
                                 emp = _userCommunication.EnterEmployeeSurname();
                                 _employeesRepository.Add(emp, employees);
@@ -107,6 +108,11 @@ namespace ConstructionRadar_App
                                 }
 
                                 emp = _userCommunication.DeleteEmployeeFromFile(employees);
+                                if (emp.FirstName == null)
+                                {
+                                    Console.Clear();
+                                    break;
+                                }
                                 _employeesRepository.Remove(emp);
 
                                 _userCommunication.UpdateFile(_employeesRepository);
@@ -146,10 +152,10 @@ namespace ConstructionRadar_App
             Console.WriteLine("Current employee list");
             Console.ForegroundColor = ConsoleColor.White;
 
-            Console.WriteLine($"Lp   Id  FirstName  LastName");
+            Console.WriteLine($"Lp    Id   FirstName   LastName");
             foreach (var employee in employeesRepository.GetAll())
             {
-                Console.WriteLine($"{i}.   {employee.Id}   {employee.FirstName}    {employee.Surname}");
+                Console.WriteLine($"{i}.    {employee.Id}    {employee.FirstName}    {employee.Surname}");
                 i++;
             }
         }
