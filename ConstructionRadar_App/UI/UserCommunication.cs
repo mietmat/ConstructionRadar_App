@@ -42,7 +42,7 @@ namespace ConstructionRadar_App.UI
         {
             List<Employee> employeeList = employees.GetAll().ToList();
 
-
+            
             if (!File.Exists(filePath))
                 using (var allEmployee = File.Create(filePath))
                 {
@@ -54,7 +54,7 @@ namespace ConstructionRadar_App.UI
                 using (var allEmployee = File.AppendText(filePath))
                 {
                     allEmployee.WriteLine($"{employee.Id} {employee.FirstName} {employee.Surname}");
-                }                
+                }
             }
         }
 
@@ -63,62 +63,74 @@ namespace ConstructionRadar_App.UI
             bool valid = true;
             int numberToRemove;
             string input;
-
-            if (File.Exists(filePath))
+            do
             {
-
-                do
+                if (File.Exists(filePath))
                 {
-                    Console.Write($"If you want to remove employee use number min:{employees.Min(x => x.Id)}, max:" +
-                                      $" {employees.Max(x => x.Id)}\nPlease write id to delete employee: ");
-                    input = Console.ReadLine();
-                  
-                    valid = CheckData.CheckingIntData(input);
-                    if (valid)
+
+                    do
                     {
-                        numberToRemove = int.Parse(input);
-                        try
+                        Console.Write($"If you want to remove employee use number min:{employees.Min(x => x.Id)}, max:" +
+                                          $" {employees.Max(x => x.Id)}\nPlease write id to delete employee or Q to Quit: ");
+                        input = Console.ReadLine();
+                        if (input.ToLower() == "q")
                         {
-                            var test = employees.First(x => x.Id == numberToRemove);
-
+                            break;
                         }
-                        catch (Exception ex)
+                        valid = CheckData.CheckingIntData(input);
+                        if (valid)
                         {
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine($"ID: {numberToRemove} doesn't exist. Error: {ex.Message}");
-                            Console.ForegroundColor = ConsoleColor.White;
+                            numberToRemove = int.Parse(input);
+                            try
+                            {
+                                employees.First(x => x.Id == numberToRemove);
 
-                            valid = false;
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine($"ID: {numberToRemove} doesn't exist. Error: {ex.Message}");
+                                Console.ForegroundColor = ConsoleColor.White;
+
+                                valid = false;
+                            }
                         }
+
+                    } while (!valid);
+                    if (input.ToLower() == "q")
+                    {
+                        employee.Surname = null;
+                        employee.FirstName = null;
+                        
+                        break;
+                    }
+                    numberToRemove = int.Parse(input);
+                    employee = employees.FirstOrDefault(x => x.Id == numberToRemove);
+
+                    File.Delete(filePath);
+
+                    if (numberToRemove <= 0)
+                    {
+                        Console.WriteLine($"Please use number > 0");
                     }
 
-                } while (!valid);
-             
-                numberToRemove = int.Parse(input);
-                var employee = employees.FirstOrDefault(x => x.Id == numberToRemove);
+                    Console.Clear();
 
-                File.Delete(filePath);
+                    using (var allActions = File.AppendText(actionsFile))
+                    {
+                        allActions.WriteLine($"{DateTime.Now}-EmployeeDeleted- Id:{employee.Id}, FirstName: {employee.FirstName},LastName: {employee.Surname}");
+                    }
 
-                if (numberToRemove <= 0)
-                {
-                    Console.WriteLine($"Please use number > 0");
+
+                    return (Employee)employee;
                 }
-
-                Console.Clear();
-
-                using (var allActions = File.AppendText(actionsFile))
+                else
                 {
-                    allActions.WriteLine($"{DateTime.Now}-EmployeeDeleted- Id:{employee.Id}, FirstName: {employee.FirstName},LastName: {employee.Surname}");
+                    Console.WriteLine("You can't delete the employee - file doesn't exist ! Please choose another option from 'Main Menu' !\n\nPress any key to open 'Main Menu' !\n");
+                    Console.ReadKey();
                 }
+            } while (true);
 
-
-                return (Employee)employee;
-            }
-            else
-            {
-                Console.WriteLine("You can't delete the employee - file doesn't exist ! Please choose another option from 'Main Menu' !\n\nPress any key to open 'Main Menu' !\n");
-                Console.ReadKey();
-            }
             return employee;
 
         }
@@ -128,7 +140,7 @@ namespace ConstructionRadar_App.UI
             Console.Write("Please enter name of the employee: ");
 
             employee.FirstName = Console.ReadLine().ToUpper();
-
+           
             while (!CheckData.CheckingStringData(employee.FirstName))
             {
                 Console.Write("Employee name should have only a letters ! Please enter name of the employee: ");
