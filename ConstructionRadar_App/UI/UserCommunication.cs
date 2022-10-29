@@ -33,12 +33,12 @@ namespace ConstructionRadar_App.UI
 
             using (var allActions = File.AppendText(actionsFile))
             {
-                allActions.WriteLine($"{DateTime.UtcNow}-EmployeeAdded- {employee.Id}. {employee.FirstName} {employee.Surname}");
+                allActions.WriteLine($"{DateTime.Now}-EmployeeAdded- Id:{employee.Id}. {employee.FirstName} {employee.Surname}");
             }
 
         }
 
-        public void AddEmployeesToFile(IRepository<Employee> employees)
+        public void UpdateFile(IRepository<Employee> employees)
         {
             List<Employee> employeeList = employees.GetAll().ToList();
 
@@ -54,16 +54,8 @@ namespace ConstructionRadar_App.UI
                 using (var allEmployee = File.AppendText(filePath))
                 {
                     allEmployee.WriteLine($"{employee.Id} {employee.FirstName} {employee.Surname}");
-                }
-
-                using (var allActions = File.AppendText(actionsFile))
-                {
-                    allActions.WriteLine($"{DateTime.UtcNow}-EmployeeAdded- Id: {employee.Id}. FirstName: {employee.FirstName}, Surname: {employee.Surname}");
-                }
+                }                
             }
-
-
-
         }
 
         public Employee DeleteEmployeeFromFile(List<Employee> employees)
@@ -71,28 +63,40 @@ namespace ConstructionRadar_App.UI
             bool valid = true;
             int numberToRemove;
             string input;
-            Console.Clear();
+
             if (File.Exists(filePath))
             {
-                Console.WriteLine("Current employee list:");
-                foreach (var emp in employees)
-                {
-                    Console.WriteLine($"{emp.Id}. {emp.FirstName} {emp.Surname}");
-                }
 
                 do
                 {
-                    Console.Write($"If you want to remove employee use number > 0 and max:" +
-                    $" {employees.Count()}\nPlease write number to delete employee: ");
+                    Console.Write($"If you want to remove employee use number min:{employees.Min(x => x.Id)}, max:" +
+                                      $" {employees.Max(x => x.Id)}\nPlease write id to delete employee: ");
                     input = Console.ReadLine();
-
+                  
                     valid = CheckData.CheckingIntData(input);
+                    if (valid)
+                    {
+                        numberToRemove = int.Parse(input);
+                        try
+                        {
+                            var test = employees.First(x => x.Id == numberToRemove);
+
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine($"ID: {numberToRemove} doesn't exist. Error: {ex.Message}");
+                            Console.ForegroundColor = ConsoleColor.White;
+
+                            valid = false;
+                        }
+                    }
 
                 } while (!valid);
-
+             
                 numberToRemove = int.Parse(input);
-
                 var employee = employees.FirstOrDefault(x => x.Id == numberToRemove);
+
                 File.Delete(filePath);
 
                 if (numberToRemove <= 0)
@@ -104,7 +108,7 @@ namespace ConstructionRadar_App.UI
 
                 using (var allActions = File.AppendText(actionsFile))
                 {
-                    allActions.Write($"{DateTime.Now}-EmployeeDeleted- Id:{employee.Id}, FirstName: {employee.FirstName}, Date: {DateTime.UtcNow}");
+                    allActions.WriteLine($"{DateTime.Now}-EmployeeDeleted- Id:{employee.Id}, FirstName: {employee.FirstName},LastName: {employee.Surname}");
                 }
 
 

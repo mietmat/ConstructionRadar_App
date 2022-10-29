@@ -1,7 +1,6 @@
 ﻿using ConstructionRadar_App.Entities;
 using Microsoft.EntityFrameworkCore;
 
-
 namespace ConstructionRadar_App.Repositories
 {
     //public delegate void ItemAdded<in T>(T item);
@@ -39,6 +38,11 @@ namespace ConstructionRadar_App.Repositories
             ItemAdded?.Invoke(this, item);
         }
 
+        public void AddWithOldId(T item)
+        {
+            throw new NotImplementedException();
+        }
+
         public void Remove(T item)
         {
             _dbSet.Remove(item);
@@ -54,6 +58,9 @@ namespace ConstructionRadar_App.Repositories
             _dbContext.SaveChanges();
         }
 
-
+        public void Add(T item, List<Employee> items)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

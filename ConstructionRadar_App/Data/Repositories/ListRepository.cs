@@ -14,6 +14,22 @@ namespace ConstructionRadar_App.Repositories
             _items.Add(item);
 
         }
+        public void Add(T item, List<Employee> items)
+        {
+            if (items.Count() > 0)
+            {
+                item.Id = items.Max(x => x.Id) + 1;
+            }
+            else
+                item.Id = _items.Count + 1;
+            _items.Add(item);
+        }
+
+        public void AddWithOldId(T item)
+        {
+            _items.Add(item);
+
+        }
 
         public void Remove(T item)
         {
@@ -42,6 +58,7 @@ namespace ConstructionRadar_App.Repositories
                 Console.WriteLine(item);
             }
         }
+
 
     }
 
