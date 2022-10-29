@@ -8,7 +8,7 @@ namespace ConstructionRadar_App.UI
         Employee EnterEmployeeName();
         Employee EnterEmployeeSurname();
         void AddEmployeeToFile(Employee employee);
-        void AddEmployeesToFile(IRepository<Employee> employee);
+        void UpdateFile(IRepository<Employee> employee);
         Employee DeleteEmployeeFromFile(List<Employee> employees);
 
     }

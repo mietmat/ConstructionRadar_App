@@ -3,6 +3,7 @@ using ConstructionRadar_App.Data;
 using ConstructionRadar_App.Entities;
 using ConstructionRadar_App.Repositories;
 using ConstructionRadar_App.UI;
+using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
 
 namespace ConstructionRadar_App
 {
@@ -65,19 +66,12 @@ namespace ConstructionRadar_App
 
                                 foreach (var employee in employees)
                                 {
-                                    _employeesRepository.Add(employee);
+                                    _employeesRepository.AddWithOldId(employee);
                                 }
 
                                 if (_employeesRepository.GetAll().Count() > 0)
                                 {
-                                    Console.ForegroundColor = ConsoleColor.Green;
-                                    Console.WriteLine("Current list with employees: ");
-                                    Console.ForegroundColor = ConsoleColor.White;
-
-                                    foreach (var employee in _employeesRepository.GetAll())
-                                    {
-                                        Console.WriteLine($"{employee.Id}. {employee.FirstName} {employee.Surname}");
-                                    }
+                                    ShowEmployees(_employeesRepository);
                                 }
                                 else
                                 {
@@ -85,7 +79,7 @@ namespace ConstructionRadar_App
                                 }
                                 emp = _userCommunication.EnterEmployeeName();
                                 emp = _userCommunication.EnterEmployeeSurname();
-                                _employeesRepository.Add(emp);
+                                _employeesRepository.Add(emp, employees);
 
                                 Console.ForegroundColor = ConsoleColor.Red;
                                 Console.WriteLine($"We have {_employeesRepository.GetAll().Count()} employees !");
@@ -104,13 +98,18 @@ namespace ConstructionRadar_App
 
                                 foreach (var employee in employees)
                                 {
-                                    _employeesRepository.Add(employee);
+                                    _employeesRepository.AddWithOldId(employee);
+                                }
+                                Console.Clear();
+                                if (_employeesRepository.GetAll().Count() > 0)
+                                {
+                                    ShowEmployees(_employeesRepository);
                                 }
 
                                 emp = _userCommunication.DeleteEmployeeFromFile(employees);
                                 _employeesRepository.Remove(emp);
 
-                                _userCommunication.AddEmployeesToFile(_employeesRepository);
+                                _userCommunication.UpdateFile(_employeesRepository);
                                 Console.WriteLine("Press any key to open 'Main Menu' !");
                                 Console.ReadKey();
                                 Console.Clear();
@@ -126,6 +125,7 @@ namespace ConstructionRadar_App
                     }
                     else
                     {
+                        Console.Clear();
                         Console.ForegroundColor = ConsoleColor.Red;
                         throw new ArgumentException($"Invalid argument: {nameof(input)}. Please use only numbers!");
 
@@ -139,6 +139,20 @@ namespace ConstructionRadar_App
 
         }
 
+        private void ShowEmployees(IRepository<Employee> employeesRepository)
+        {
+            int i = 1;
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("Current employee list");
+            Console.ForegroundColor = ConsoleColor.White;
+
+            Console.WriteLine($"Lp   Id  FirstName  LastName");
+            foreach (var employee in employeesRepository.GetAll())
+            {
+                Console.WriteLine($"{i}.   {employee.Id}   {employee.FirstName}    {employee.Surname}");
+                i++;
+            }
+        }
 
         public void Close()
         {
