@@ -19,7 +19,6 @@ namespace ConstructionRadar_App.Repositories
             _itemAddedCallback = itemAddedCallBack;
         }
 
-        public event EventHandler<T> ItemAdded;
 
         public IEnumerable<T> GetAll()
         {
