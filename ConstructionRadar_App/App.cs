@@ -16,14 +16,13 @@ namespace ConstructionRadar_App
 
         string filePath = "Employees.txt";
         List<Employee> employees = new();
-        Employee emp = new();
 
         public App(IRepository<Employee> employeeRepository, ITxtReader txtReader, IUserCommunication userCommunication, ConstructionRadarDbContext constructionRadarDbContext)
         {
             _employeesRepository = employeeRepository;
             _txtReader = txtReader;
-            _constructionRadarDbContext = constructionRadarDbContext;
             _userCommunication = userCommunication;
+            _constructionRadarDbContext = constructionRadarDbContext;
             _constructionRadarDbContext.Database.EnsureCreated();//make sure DataBase existing / creating DataBase
         }
         public void Run()
@@ -61,14 +60,6 @@ namespace ConstructionRadar_App
                                 break;
                             case 1:
                                 Console.Clear();
-                                employees = _txtReader.ReadEmployeesFromFile(filePath);
-                                _employeesRepository.RemoveAll();
-
-                                foreach (var employee in employees)
-                                {
-                                    _employeesRepository.AddWithOldId(employee);
-                                }
-
                                 if (_employeesRepository.GetAll().Count() > 0)
                                 {
                                     ShowEmployees(_employeesRepository);
@@ -78,44 +69,39 @@ namespace ConstructionRadar_App
                                     Console.WriteLine("Empty list of employee. Please add new employ !");
                                 }
 
-                                emp = _userCommunication.EnterEmployeeName();
-                                emp = _userCommunication.EnterEmployeeSurname();
-                                _employeesRepository.Add(emp, employees);
+                                Employee emp = new();
+                                emp = _userCommunication.EnterEmployeeName(emp);
+                                emp = _userCommunication.EnterEmployeeSurname(emp);
+                                _employeesRepository.Add(emp);
+                                _employeesRepository.Save();
 
                                 Console.ForegroundColor = ConsoleColor.Red;
                                 Console.WriteLine($"We have {_employeesRepository.GetAll().Count()} employees !");
                                 Console.ForegroundColor = ConsoleColor.White;
 
-                                _userCommunication.AddEmployeeToFile(emp);
-                                Console.WriteLine($"Added new employee: {emp.FirstName}!");
+                                Console.WriteLine($"Added new employee: {emp.FirstName}");
                                 Console.WriteLine("Press any key to open 'Main Menu' !");
                                 Console.ReadKey();
 
                                 Console.Clear();
                                 break;
                             case 2:
-                                employees = _txtReader.ReadEmployeesFromFile(filePath);
-                                _employeesRepository.RemoveAll();
+                                employees = _employeesRepository.GetAll().ToList();
 
-                                foreach (var employee in employees)
-                                {
-                                    _employeesRepository.AddWithOldId(employee);
-                                }
                                 Console.Clear();
                                 if (_employeesRepository.GetAll().Count() > 0)
                                 {
                                     ShowEmployees(_employeesRepository);
                                 }
 
-                                emp = _userCommunication.DeleteEmployeeFromFile(employees);
-                                if (emp.FirstName == null)
+                                emp = _userCommunication.GetIdToRemoveEmployee();
+                                if (emp.FirstName!=null)
                                 {
-                                    Console.Clear();
-                                    break;
-                                }
-                                _employeesRepository.Remove(emp);
+                                    _employeesRepository.Remove(emp);
+                                    _employeesRepository.Save();
+                                }                               
 
-                                _userCommunication.UpdateFile(_employeesRepository);
+
                                 Console.WriteLine("Press any key to open 'Main Menu' !");
                                 Console.ReadKey();
                                 Console.Clear();

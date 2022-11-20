@@ -9,7 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 var services = new ServiceCollection();
 services.AddSingleton<IApp, App>();
-services.AddSingleton<IRepository<Employee>, ListRepository<Employee>>();
+services.AddSingleton<IRepository<Employee>, SqlRepository<Employee>>();
 services.AddSingleton<ITxtReader, TxtReader>();
 services.AddSingleton<IUserCommunication, UserCommunication>();
 services.AddDbContext<ConstructionRadarDbContext>(options => options

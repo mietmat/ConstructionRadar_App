@@ -1,5 +1,6 @@
 ﻿using ConstructionRadar_App.Components.DataProviders.Extensions;
 using ConstructionRadar_App.Components.TxtReader;
+using ConstructionRadar_App.Data;
 using ConstructionRadar_App.Repositories;
 using Employee = ConstructionRadar_App.Entities.Employee;
 
@@ -8,14 +9,16 @@ namespace ConstructionRadar_App.UI
     public class UserCommunication : IUserCommunication
     {
         public ITxtReader _txtReader { get; set; }
+        public ConstructionRadarDbContext _constructionRadarDbContext { get; set; }
         Employee employee = new();
 
         string filePath = "Employees.txt";
         string actionsFile = $"AllAction.txt";
 
-        public UserCommunication(ITxtReader txtReader)
+        public UserCommunication(ITxtReader txtReader, ConstructionRadarDbContext constructionRadarDbContext)
         {
             _txtReader = txtReader;
+            _constructionRadarDbContext = constructionRadarDbContext;
         }
 
         public void AddEmployeeToFile(Employee employee)
@@ -65,7 +68,7 @@ namespace ConstructionRadar_App.UI
             string input;
             do
             {
-                if (File.Exists(filePath))
+                if (true)
                 {
 
                     do
@@ -135,7 +138,7 @@ namespace ConstructionRadar_App.UI
 
         }
 
-        public Employee EnterEmployeeName()
+        public Employee EnterEmployeeName(Employee employee)
         {
             Console.Write("Please enter name of the employee: ");
 
@@ -154,7 +157,7 @@ namespace ConstructionRadar_App.UI
             return employee;
         }
 
-        public Employee EnterEmployeeSurname()
+        public Employee EnterEmployeeSurname(Employee employee)
         {
             Console.Write("Please enter surname of the employee: ");
 
@@ -173,5 +176,72 @@ namespace ConstructionRadar_App.UI
             return employee;
         }
 
+        public Employee GetIdToRemoveEmployee()
+        {
+            bool valid = true;
+            int numberToRemove;
+            string input;
+            do
+            {
+                if (_constructionRadarDbContext.Employees!=null)
+                {
+                    do
+                    {
+                        Console.Write($"If you want to remove employee use number min:{_constructionRadarDbContext.Employees.First().Id}, max:" +
+                                          $" {_constructionRadarDbContext.Employees.OrderBy(x=>x.Id).Last().Id}\nPlease write id to delete employee or Q to Quit: ");
+                        input = Console.ReadLine();
+                        if (input.ToLower() == "q")
+                        {
+                            break;
+                        }
+                        valid = CheckData.CheckingIntData(input);
+                        if (valid)
+                        {
+                            numberToRemove = int.Parse(input);
+                            try
+                            {
+                                _constructionRadarDbContext.Employees.First(x => x.Id == numberToRemove);
+
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine($"ID: {numberToRemove} doesn't exist. Error: {ex.Message}");
+                                Console.ForegroundColor = ConsoleColor.White;
+
+                                valid = false;
+                            }
+                        }
+
+                    } while (!valid);
+                    if (input.ToLower() == "q")
+                    {
+                        employee.Surname = null;
+                        employee.FirstName = null;
+
+                        break;
+                    }
+                    numberToRemove = int.Parse(input);                    
+
+                    if (numberToRemove <= 0)
+                    {
+                        Console.WriteLine($"Please use number > 0");
+                    }
+
+                    Console.Clear();
+
+                    employee = _constructionRadarDbContext.Employees.FirstOrDefault(x => x.Id == numberToRemove);
+
+                    return employee;
+                }
+                else
+                {
+                    Console.WriteLine("You can't delete - employee doesn't exist ! Please choose another option from 'Main Menu' !\n\nPress any key to open 'Main Menu' !\n");
+                    Console.ReadKey();
+                }
+            } while (true);
+
+            return employee;
+        }
     }
 }
