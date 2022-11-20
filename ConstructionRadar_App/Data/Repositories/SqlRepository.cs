@@ -1,4 +1,5 @@
-﻿using ConstructionRadar_App.Entities;
+﻿using ConstructionRadar_App.Data;
+using ConstructionRadar_App.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace ConstructionRadar_App.Repositories
@@ -8,17 +9,20 @@ namespace ConstructionRadar_App.Repositories
     public class SqlRepository<T> : IRepository<T>
         where T : class, IEntity, new()
     {
+        private readonly ConstructionRadarDbContext _constructionRadarDbContext;
         private readonly DbSet<T> _dbSet;
-        private readonly DbContext _dbContext;
-        private readonly Action<T>? _itemAddedCallback;
+        private readonly Action<T>? _ActionCallback;
 
-        public SqlRepository(DbContext dbContext, Action<T>? itemAddedCallBack = null)
+
+        public event EventHandler<T> ItemAdded;
+        public event EventHandler<T> ItemRemoved;
+
+        public SqlRepository(ConstructionRadarDbContext constructionRadarDbContext, Action<T>? ActionCallback = null)
         {
-            _dbContext = dbContext;
-            _dbSet = _dbContext.Set<T>();
-            _itemAddedCallback = itemAddedCallBack;
+            _constructionRadarDbContext = constructionRadarDbContext;
+            _dbSet = _constructionRadarDbContext.Set<T>();
+            _ActionCallback = ActionCallback;
         }
-
 
         public IEnumerable<T> GetAll()
         {
@@ -27,24 +31,29 @@ namespace ConstructionRadar_App.Repositories
 
         public T? GetById(int id)
         {
+
             return _dbSet.Find(id);
         }
 
         public void Add(T item)
         {
             _dbSet.Add(item);
-            _itemAddedCallback?.Invoke(item);
+            _ActionCallback?.Invoke(item);
             ItemAdded?.Invoke(this, item);
+
         }
 
         public void AddWithOldId(T item)
         {
-            throw new NotImplementedException();
+            _dbSet.Add(item);
+            _ActionCallback?.Invoke(item);
+            ItemAdded?.Invoke(this, item);
         }
 
         public void Remove(T item)
         {
             _dbSet.Remove(item);
+            //ItemRemoved?.Invoke(this, item);
         }
 
         public void RemoveAll()
@@ -54,7 +63,7 @@ namespace ConstructionRadar_App.Repositories
 
         public void Save()
         {
-            _dbContext.SaveChanges();
+            _constructionRadarDbContext.SaveChanges();
         }
 
         public void Add(T item, List<Employee> items)
