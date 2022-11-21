@@ -1,4 +1,4 @@
-﻿namespace ConstructionRadar_App
+﻿namespace ConstructionRadar_App.UI
 {
     public interface IApp
     {

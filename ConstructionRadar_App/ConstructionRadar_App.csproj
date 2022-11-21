@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Resources\" />
+    <Folder Include="1_DataAccess\Resources\" />
   </ItemGroup>
 
 </Project>

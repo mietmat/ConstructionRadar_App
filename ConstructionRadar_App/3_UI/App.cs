@@ -2,10 +2,9 @@
 using ConstructionRadar_App.Data;
 using ConstructionRadar_App.Entities;
 using ConstructionRadar_App.Repositories;
-using ConstructionRadar_App.UI;
 using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
 
-namespace ConstructionRadar_App
+namespace ConstructionRadar_App.UI
 {
     public class App : IApp
     {
@@ -95,11 +94,11 @@ namespace ConstructionRadar_App
                                 }
 
                                 emp = _userCommunication.GetIdToRemoveEmployee();
-                                if (emp.FirstName!=null)
+                                if (emp.FirstName != null)
                                 {
                                     _employeesRepository.Remove(emp);
                                     _employeesRepository.Save();
-                                }                               
+                                }
 
 
                                 Console.WriteLine("Press any key to open 'Main Menu' !");

@@ -1,5 +1,4 @@
-﻿using ConstructionRadar_App;
-using ConstructionRadar_App.Components.TxtReader;
+﻿using ConstructionRadar_App.Components.TxtReader;
 using ConstructionRadar_App.Data;
 using ConstructionRadar_App.Entities;
 using ConstructionRadar_App.Repositories;
