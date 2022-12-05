@@ -12,20 +12,21 @@ namespace ConstructionRadar_App
                 "You can manage your employees, equipment and subcontractors here !\nThe building process is faster with us !\n");
 
             Console.WriteLine("Main Menu\n\n" +
-                "1.  Add new Employee\n" +
-                "2.  Delete Employee\n" +
-                "3.  Add new Manager\n" +
-                "4.  Delete Manager\n" +
-                "5.  Add new Business Parter\n" +
-                "6.  Delete Business Partner\n" +
-                "7.  Add Equipment\n" +
-                "8.  Delete Equipment\n" +
-                "9.  Add new Investment\n" +
-                "10. Delete Investment\n" +
-                "11. Add new Investor\n" +
-                "12. Remove Investor\n" +
-                "13. Add new Subcontractor\n" +
-                "14. Delete Subcontractor\n");
+                "1.  Show current Employees\n" +
+                "2.  Add new Employee\n" +
+                "3.  Delete Employee\n" +
+                "4.  Edit Employee\n" +
+                "5.  Show current Contracts\n" +
+                "6.  Add new Contract\n" +
+                "7.  Delete Contract\n" +
+                "8.  Edit Contract\n"+
+                "9.  Show Data");
+            //"9.  Add Equipment\n" +
+            //"10. Delete Equipment\n" +                
+            //"11. Edit Equipment\n" +                
+            //"12. Add new Subcontractor\n" +
+            //"13. Delete Subcontractor\n" +
+            //"14. Edit Subcontractor\n");
 
             Console.WriteLine("If you want to quit press Q.\n");
 

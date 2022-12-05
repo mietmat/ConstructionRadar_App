@@ -3,7 +3,6 @@
     public interface IApp
     {
         void Run();
-
         void Close();
     }
 }

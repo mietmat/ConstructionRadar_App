@@ -12,7 +12,7 @@ namespace ConstructionRadar_App.Data
 
         }
         public DbSet<Employee> Employees => Set<Employee>();
-        public DbSet<BusinessPartner> BusinessPartners => Set<BusinessPartner>();
+        public DbSet<Contract> Contract => Set<Contract>();
 
 
     }

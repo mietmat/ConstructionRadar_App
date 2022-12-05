@@ -8,6 +8,10 @@ namespace ConstructionRadar_App.Repositories
     {
         protected readonly List<T> _items = new();
 
+        public event EventHandler<T>? ItemAdded;
+        public event EventHandler<T>? ItemRemoved;
+        public event EventHandler<T>? ItemUpdated;
+
         public void Add(T item)
         {
             item.Id = _items.Count + 1;
@@ -59,7 +63,10 @@ namespace ConstructionRadar_App.Repositories
             }
         }
 
-
+        public void Updated(T item)
+        {
+            throw new NotImplementedException();
+        }
     }
 
 }

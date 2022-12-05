@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Text;
+using System.Text.Json;
 
 namespace ConstructionRadar_App.Entities.Extensions
 {
@@ -10,6 +11,22 @@ namespace ConstructionRadar_App.Entities.Extensions
             return JsonSerializer.Deserialize<T>(json);
         }
 
+        public static string ToStringOneLine(this Employee emp)
+        {
+            StringBuilder sb = new();
+            sb.AppendLine($"{emp.FirstName}|{emp.Surname}|{emp.CompanyName}|{emp.Salary}");
+
+            return sb.ToString();
+        }
+
+        public static string ToStringOneLine(this Contract contract)
+        {
+            StringBuilder sb = new();
+            sb.AppendLine($"{contract.Name}|{contract.Country}|{contract.City}|" +
+                $"{contract.Budget}|{contract.StartDate}|{contract.FinishDate}");
+
+            return sb.ToString();
+        }
 
 
     }

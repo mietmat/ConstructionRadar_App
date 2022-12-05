@@ -1,6 +1,7 @@
 ﻿using ConstructionRadar_App.Data;
 using ConstructionRadar_App.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace ConstructionRadar_App.Repositories
 {
@@ -11,18 +12,17 @@ namespace ConstructionRadar_App.Repositories
     {
         private readonly ConstructionRadarDbContext _constructionRadarDbContext;
         private readonly DbSet<T> _dbSet;
-        private readonly Action<T>? _ActionCallback;
-
-
-        public event EventHandler<T> ItemAdded;
-        public event EventHandler<T> ItemRemoved;
+                
 
         public SqlRepository(ConstructionRadarDbContext constructionRadarDbContext, Action<T>? ActionCallback = null)
         {
             _constructionRadarDbContext = constructionRadarDbContext;
             _dbSet = _constructionRadarDbContext.Set<T>();
-            _ActionCallback = ActionCallback;
         }
+
+        public event EventHandler<T>? ItemAdded;
+        public event EventHandler<T>? ItemRemoved;
+        public event EventHandler<T>? ItemUpdated;
 
         public IEnumerable<T> GetAll()
         {
@@ -38,7 +38,6 @@ namespace ConstructionRadar_App.Repositories
         public void Add(T item)
         {
             _dbSet.Add(item);
-            _ActionCallback?.Invoke(item);
             ItemAdded?.Invoke(this, item);
 
         }
@@ -46,19 +45,25 @@ namespace ConstructionRadar_App.Repositories
         public void AddWithOldId(T item)
         {
             _dbSet.Add(item);
-            _ActionCallback?.Invoke(item);
             ItemAdded?.Invoke(this, item);
         }
 
         public void Remove(T item)
         {
             _dbSet.Remove(item);
-            //ItemRemoved?.Invoke(this, item);
+            ItemRemoved?.Invoke(this, item);
         }
 
         public void RemoveAll()
         {
             _dbSet.ToList().Clear();
+        }
+
+        public void Updated(T item)
+        {
+            _constructionRadarDbContext.SaveChanges();
+            ItemUpdated?.Invoke(this,item);
+
         }
 
         public void Save()
@@ -70,5 +75,6 @@ namespace ConstructionRadar_App.Repositories
         {
             throw new NotImplementedException();
         }
+            
     }
 }
