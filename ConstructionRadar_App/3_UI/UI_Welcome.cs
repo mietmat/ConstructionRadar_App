@@ -9,7 +9,7 @@ namespace ConstructionRadar_App
             Console.WriteLine("*****CONSTRUCTION RADAR*****");
             Console.WriteLine();
             Console.WriteLine("Welcome in Construction Radar Application !\nOur application made for Civil Engineers or Construction Contractor to build the future !\n" +
-                "You can manage your employees, equipment and subcontractors here !\nThe building process is faster with us !\n");
+                "You can manage your employees and contracts here !\nThe building process is faster with us !\n");
 
             Console.WriteLine("Main Menu\n\n" +
                 "1.  Show current Employees\n" +
