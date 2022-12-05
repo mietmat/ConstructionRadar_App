@@ -16,8 +16,4 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="1_DataAccess\Resources\" />
-  </ItemGroup>
-
 </Project>

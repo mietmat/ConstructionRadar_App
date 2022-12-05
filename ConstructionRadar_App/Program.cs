@@ -8,6 +8,7 @@ using ConstructionRadar_App.Services;
 using ConstructionRadar_App.UI;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using MotoApp.Components.CsvReader;
 
 var services = new ServiceCollection();
 services.AddSingleton<IApp, App>();
@@ -18,6 +19,7 @@ services.AddSingleton<IRepository<Employee>, SqlRepository<Employee>>();
 services.AddSingleton<IRepository<Contract>, SqlRepository<Contract>>();
 services.AddSingleton<ITxtReader, TxtReader>();
 services.AddSingleton<IEmployeeProvider, EmployeeProvider>();
+services.AddSingleton<ICsvReader, CsvReader>();
 services.AddDbContext<ConstructionRadarDbContext>(options => options
         .UseSqlServer("Data Source=DESKTOP-S8KROC7\\SQLEXPRESS;Initial Catalog=ConstructionRadarApp;Integrated Security=True"));
 

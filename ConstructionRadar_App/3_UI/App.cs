@@ -6,6 +6,9 @@ using ConstructionRadar_App.Entities;
 using ConstructionRadar_App.Repositories;
 using ConstructionRadar_App.Services;
 using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using MotoApp.Components.CsvReader;
+using System.Xml.Linq;
 
 namespace ConstructionRadar_App.UI
 {
@@ -17,6 +20,7 @@ namespace ConstructionRadar_App.UI
         private readonly IUserCommunication _userCommunication;
         private readonly IEventHandlerService _eventHandlerService;
         private readonly IShowDataProvider _showDataProvider;
+        private readonly ICsvReader _csvReader;
         private readonly ConstructionRadarDbContext _constructionRadarDbContext;
 
         string filePath = "Employees.txt";
@@ -29,7 +33,8 @@ namespace ConstructionRadar_App.UI
             IUserCommunication userCommunication,
             ConstructionRadarDbContext constructionRadarDbContext,
             IEventHandlerService eventHandlerService,
-            IShowDataProvider showDataProvider)
+            IShowDataProvider showDataProvider,
+            ICsvReader csvReader)
         {
             _employeesRepository = employeeRepository;
             _contractRepository = contractRepository;
@@ -39,6 +44,7 @@ namespace ConstructionRadar_App.UI
             _constructionRadarDbContext.Database.EnsureCreated();//make sure DataBase existing / creating DataBase
             _eventHandlerService = eventHandlerService;
             _showDataProvider = showDataProvider;
+            _csvReader = csvReader;
         }
         public void Run()
         {
@@ -287,8 +293,9 @@ namespace ConstructionRadar_App.UI
                 {
                     Console.WriteLine(ex.Message);
                 }
-            }
-
+            }                       
+            
+            CreateXmlHomework();
         }
 
         private void ShowEmployees(IRepository<Employee> employeesRepository)
@@ -344,6 +351,42 @@ namespace ConstructionRadar_App.UI
         public void Close()
         {
             Console.WriteLine("See you again !");
+        }
+
+        private void CreateXmlHomework()
+        {
+            var cars = _csvReader.ProcessCars(@"fuel.csv");
+            var manufacturers = _csvReader.ProcessManufacturers(@"manufacturers.csv");
+       
+            var groups = manufacturers.GroupJoin(
+                cars,
+                manufacturer => manufacturer.Name,
+                car => car.Manufacturer,
+                (m, g) =>
+                new
+                {
+                    Manufacturer = m,
+                    Cars = g
+                })
+                .OrderBy(x => x.Manufacturer.Name);
+
+            var document = new XDocument();
+            var newXml = new XElement("Manufacturers", groups
+                .Select(x =>
+                new XElement("Manufacturer",
+                new XAttribute("Name", x.Manufacturer.Name),
+                new XAttribute("Country", x.Manufacturer.Country),
+                new XElement("Cars",
+                new XAttribute("country", x.Manufacturer.Country),
+                new XAttribute("CombinedSum", x.Cars.Select(x => x.Combined).Sum()),
+                x.Cars.Select(s =>
+                new XElement("Car",
+                new XAttribute("Model", s.Name),
+                new XAttribute("Combined", s.Combined)
+                    ))))));
+            document.Add(newXml);
+            document.Save("manufacturer.xml");
+
         }
     }
 }
